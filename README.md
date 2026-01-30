@@ -1,36 +1,51 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Offline Mobile App: Random Questions
 
-## Getting Started
+This is a Next.js application designed to run 100% offline as a mobile app using Capacitor.
 
-First, run the development server:
+## Features
+- ✅ **Offline First:** No network calls, all data local.
+- ✅ **Single-Session Memory:** Remembers which strings have been shown to prevent duplicates.
+- ✅ **Premium UI:** Modern dark mode with glassmorphism and smooth animations.
+- ✅ **Mobile Optimized:** Designed for mobile screen ratios and touch interactions.
 
+## How to Build for Mobile
+
+### 1. Requirements
+- **Android:** [Android Studio](https://developer.android.com/studio) installed.
+- **iOS:** [Xcode](https://developer.apple.com/xcode/) installed (macOS only).
+
+### 2. Build the Web App
+Before syncing to mobile, you must build the static version of the Next.js app:
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+npm run static
 ```
+This command runs `next build` (generating the `out` folder) and then `npx cap sync` to copy those files into the native platforms.
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### 3. Open in IDE
+#### For Android:
+```bash
+npm run open-android
+```
+This will open the project in Android Studio. From there, you can:
+1.  Connect your phone or start an emulator.
+2.  Click the **Run** button (Green Arrow).
+3.  To build an APK: `Build > Build Bundle(s) / APK(s) > Build APK(s)`.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+#### For iOS:
+```bash
+npm run open-ios
+```
+This will open the project in Xcode. From there:
+1.  Select your device or simulator at the top.
+2.  Click the **Play** button to run.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+### 4. Making Changes
+If you modify the code in `src/`:
+1.  Run `npm run static` again to update the mobile builds.
+2.  Re-run/re-build from Android Studio or Xcode.
 
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Project Structure
+- `src/app/page.tsx`: Core logic (Randomization, State).
+- `src/app/globals.css`: Premium styling.
+- `next.config.ts`: Configured for `output: 'export'`.
+- `capacitor.config.ts`: Capacitor configuration.

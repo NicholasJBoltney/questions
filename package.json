@@ -5,10 +5,18 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
+    "static": "next build && npx cap sync",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "sync": "npx cap sync",
+    "open-android": "npx cap open android",
+    "open-ios": "npx cap open ios"
   },
   "dependencies": {
+    "@capacitor/android": "^8.0.2",
+    "@capacitor/cli": "^8.0.2",
+    "@capacitor/core": "^8.0.2",
+    "@capacitor/ios": "^8.0.2",
     "next": "16.1.6",
     "react": "19.2.3",
     "react-dom": "19.2.3"
