@@ -1,73 +1,87 @@
-const CACHE_NAME = 'questions-app-v1';
+const CACHE_NAME = 'questions-app-v2';
 
-// Files to cache on install
-const STATIC_CACHE = [
-  '/',
-  '/index.html',
-  '/manifest.json',
-  '/icon-192x192.png',
-  '/icon-512x512.png'
-];
-
-// Install event - cache static files
+// Install event - skip waiting to activate immediately
 self.addEventListener('install', (event) => {
-  event.waitUntil(
-    caches.open(CACHE_NAME)
-      .then((cache) => {
-        console.log('Caching static files');
-        return cache.addAll(STATIC_CACHE);
-      })
-      .then(() => self.skipWaiting())
-  );
+  console.log('Service Worker installing...');
+  self.skipWaiting();
 });
 
-// Activate event - clean up old caches
+// Activate event - clean up old caches and take control immediately
 self.addEventListener('activate', (event) => {
+  console.log('Service Worker activating...');
   event.waitUntil(
     caches.keys()
       .then((cacheNames) => {
         return Promise.all(
           cacheNames
             .filter((name) => name !== CACHE_NAME)
-            .map((name) => caches.delete(name))
+            .map((name) => {
+              console.log('Deleting old cache:', name);
+              return caches.delete(name);
+            })
         );
       })
-      .then(() => self.clients.claim())
+      .then(() => {
+        console.log('Service Worker activated, taking control');
+        return self.clients.claim();
+      })
   );
 });
 
-// Fetch event - cache-first strategy
+// Fetch event - cache-first strategy with aggressive caching
 self.addEventListener('fetch', (event) => {
+  const { request } = event;
+  const url = new URL(request.url);
+
+  // Skip caching for non-GET requests
+  if (request.method !== 'GET') {
+    return;
+  }
+
+  // Skip caching for external domains (like Google Fonts, analytics, etc.)
+  if (url.origin !== location.origin) {
+    return;
+  }
+
   event.respondWith(
-    caches.match(event.request)
-      .then((cachedResponse) => {
+    caches.open(CACHE_NAME).then((cache) => {
+      return cache.match(request).then((cachedResponse) => {
         // Return cached version if available
         if (cachedResponse) {
+          console.log('Serving from cache:', request.url);
           return cachedResponse;
         }
 
-        // Otherwise fetch from network and cache it
-        return fetch(event.request)
+        // Fetch from network and cache it
+        console.log('Fetching from network:', request.url);
+        return fetch(request)
           .then((response) => {
-            // Don't cache non-GET requests or unsuccessful responses
-            if (event.request.method !== 'GET' || !response || response.status !== 200) {
+            // Check if valid response
+            if (!response || response.status !== 200 || response.type === 'error') {
               return response;
             }
 
-            // Clone the response (can only be consumed once)
+            // Clone and cache the response
             const responseToCache = response.clone();
-
-            caches.open(CACHE_NAME)
-              .then((cache) => {
-                cache.put(event.request, responseToCache);
-              });
+            cache.put(request, responseToCache);
+            console.log('Cached:', request.url);
 
             return response;
           })
-          .catch(() => {
-            // Network failed, return offline page if available
-            return caches.match('/');
+          .catch((error) => {
+            console.log('Fetch failed, trying to serve from cache:', error);
+            // If network fails, try to return the main page
+            return cache.match('/').then((fallback) => {
+              return fallback || new Response('Offline - No cached content available', {
+                status: 503,
+                statusText: 'Service Unavailable',
+                headers: new Headers({
+                  'Content-Type': 'text/plain'
+                })
+              });
+            });
           });
-      })
+      });
+    })
   );
 });
