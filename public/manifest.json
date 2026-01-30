@@ -4,8 +4,8 @@
   "description": "Random conversation starter questions app",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#0f172a",
-  "theme_color": "#0f172a",
+  "background_color": "#fce7f3",
+  "theme_color": "#fce7f3",
   "orientation": "portrait",
   "icons": [
     {

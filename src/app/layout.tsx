@@ -28,7 +28,7 @@ export const viewport: Viewport = {
   initialScale: 1,
   maximumScale: 1,
   userScalable: false,
-  themeColor: "#0f172a",
+  themeColor: "#fce7f3",
 };
 
 export default function RootLayout({
@@ -40,7 +40,7 @@ export default function RootLayout({
     <html lang="en">
       <head>
         <link rel="manifest" href="/manifest.json" />
-        <meta name="theme-color" content="#0f172a" />
+        <meta name="theme-color" content="#fce7f3" />
         <link rel="apple-touch-icon" href="/icon-192x192.png" />
         <script dangerouslySetInnerHTML={{
           __html: `

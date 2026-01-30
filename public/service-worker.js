@@ -1,4 +1,4 @@
-const CACHE_NAME = 'questions-app-v2';
+const CACHE_NAME = 'questions-app-v4';
 
 // Install event - skip waiting to activate immediately
 self.addEventListener('install', (event) => {
